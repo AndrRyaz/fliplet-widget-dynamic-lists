@@ -1511,42 +1511,45 @@ Fliplet.Registry.set('dynamicListUtils', (function() {
     });
   }
 
-  function setSourceValue(options, data) {
+  function setFilterValues(data) {
     return new Promise(function(resolve) {
       if (!data.filterOptions.length) {
         resolve();
       }
 
-      var entries = options.entries;
-
       data.filterOptions.forEach(function(item) {
         switch (item.valueType) {
           case 'user-profile-data':
-            if (options && options.entries) {
-              if (entries.dataSource && entries.dataSource.data.hasOwnProperty(item.fieldValue)) {
-                item.value = entries.dataSource.data[item.fieldValue];
-                return resolve();
-              }
+            Fliplet.User.getCachedSession()
+              .then(function(options) {
+                var entries = options.entries;
 
-              if (entries.saml2 && entries.saml2.data.hasOwnProperty(item.fieldValue)) {
-                item.value = entries.saml2.data[item.fieldValue];
-                return resolve();
-              }
+                if (options && options.entries) {
+                  if (entries.dataSource && entries.dataSource.data.hasOwnProperty(item.fieldValue)) {
+                    item.value = entries.dataSource.data[item.fieldValue];
+                    return resolve();
+                  }
 
-              if (entries.flipletLogin && entries.flipletLogin.data.hasOwnProperty(item.fieldValue)) {
-                item.value = entries.flipletLogin.data[item.fieldValue];
-                return resolve();
-              }
-            }
+                  if (entries.saml2 && entries.saml2.data.hasOwnProperty(item.fieldValue)) {
+                    item.value = entries.saml2.data[item.fieldValue];
+                    return resolve();
+                  }
 
-            Fliplet.Profile.get(item.fieldValue)
-              .then(function(result) {
-                if (!result) {
-                  item.value = '';
-                  return resolve();
+                  if (entries.flipletLogin && entries.flipletLogin.data.hasOwnProperty(item.fieldValue)) {
+                    item.value = entries.flipletLogin.data[item.fieldValue];
+                    return resolve();
+                  }
                 }
 
-                item.value = result;
+                Fliplet.Profile.get(item.fieldValue)
+                  .then(function(result) {
+                    if (!result) {
+                      item.value = '';
+                      return resolve();
+                    }
+
+                    item.value = result;
+                  });
               });
             break;
 
@@ -1634,7 +1637,7 @@ Fliplet.Registry.set('dynamicListUtils', (function() {
       getFields: getRecordFields,
       getFieldValues: getRecordFieldValues,
       parseFilters: parseRecordFilters,
-      setSource: setSourceValue,
+      setFilterValues: setFilterValues,
       addFilterProperties: addRecordFilterProperties,
       updateFiles: updateRecordFiles,
       prepareData: prepareRecordsData,
