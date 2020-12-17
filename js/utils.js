@@ -1514,7 +1514,7 @@ Fliplet.Registry.set('dynamicListUtils', (function() {
   function setFilterValues(data) {
     return new Promise(function(resolve) {
       if (!data.filterOptions.length) {
-        resolve();
+        return resolve();
       }
 
       data.filterOptions.forEach(function(item) {
