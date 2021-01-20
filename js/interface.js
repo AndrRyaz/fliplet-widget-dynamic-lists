@@ -235,6 +235,7 @@ var DynamicLists = (function() {
           var value = $(this).val();
           var type = $(this).data('field');
           var $selector = $(this).parents('.filter-panel');
+          var id = $(this).attr('filter-item-id');
 
           if (type === 'field') {
             $selector.find('.panel-title-text .column').html(value === 'none' ? '(Field)' : value);
